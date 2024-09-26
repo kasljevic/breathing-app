@@ -15,11 +15,13 @@
             margin: 0;
             background-color: #1a202c;
             color: #f7fafc;
+            padding: 1rem;
         }
         h1 {
             color: #fc8181;
             font-size: 2rem;
             margin-bottom: 1rem;
+            text-align: center;
         }
         button {
             background-color: #e53e3e;
@@ -44,21 +46,23 @@
         #info {
             display: none;
             max-width: 28rem;
-            text-align: center;
+            text-align: left;
             font-size: 0.875rem;
             color: #cbd5e0;
             margin-bottom: 1rem;
         }
         #heart {
-            font-size: 10rem;
+            font-size: 8rem;
             color: #fc8181;
             transition: transform 1s ease-in-out;
+            margin: 1rem 0;
         }
         #reminder {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: bold;
             color: #fc8181;
-            margin: 1rem 0;
+            margin: 0.5rem 0 1.5rem 0;
+            text-align: center;
         }
         #controls {
             display: flex;
@@ -66,8 +70,20 @@
             margin-bottom: 1rem;
         }
         #stats, #inputs {
-            font-size: 0.75rem;
+            font-size: 0.875rem;
             color: #a0aec0;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 0.5rem;
+        }
+        #inputs {
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+        label {
+            margin-right: 0.5rem;
         }
         input {
             width: 3rem;
@@ -104,7 +120,10 @@
         <button id="resetButton">Reset</button>
     </div>
     
-    <div id="stats">Duration: <span id="durationDisplay">5</span>s | Cycles: <span id="cycleCount">0</span> / <span id="maxCycles">10</span></div>
+    <div id="stats">
+        <span>Duration: <span id="durationDisplay">5</span>s</span>
+        <span>Cycles: <span id="cycleCount">0</span> / <span id="maxCycles">10</span></span>
+    </div>
     
     <div id="inputs">
         <label for="duration">Duration (s):</label>
