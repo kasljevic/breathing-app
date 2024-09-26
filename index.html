@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart-Based Breathing Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #1a202c;
+            color: #f7fafc;
+            padding: 1rem;
+        }
+        h1 {
+            color: #fc8181;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        button {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #c53030;
+        }
+        #infoButton {
+            background-color: transparent;
+            color: #63b3ed;
+        }
+        #infoButton:hover {
+            color: #4299e1;
+        }
+        #info {
+            display: none;
+            max-width: 28rem;
+            text-align: left;
+            font-size: 0.875rem;
+            color: #cbd5e0;
+            margin-bottom: 1rem;
+        }
+        #heart {
+            font-size: 8rem;
+            color: #fc8181;
+            transition: transform 1s ease-in-out;
+            margin: 1rem 0;
+        }
+        #reminder {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #fc8181;
+            margin: 0.5rem 0 1.5rem 0;
+            text-align: center;
+        }
+        #controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        #stats, #inputs {
+            font-size: 0.875rem;
+            color: #a0aec0;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 300px;
+            margin-bottom: 0.5rem;
+        }
+        #inputs {
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+        label {
+            margin-right: 0.5rem;
+        }
+        input {
+            width: 3rem;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            background-color: #2d3748;
+            color: white;
+            border: 1px solid #4a5568;
+        }
+    </style>
+</head>
+<body>
+    <h1>Heart-Based Breathing Guide</h1>
+    
+    <button id="infoButton">Show Tips</button>
+    
+    <div id="info">
+        <p>Your body's stress responses are rooted in ancient survival mechanisms. Understanding that your brain tends to shut down under stress can help you proactively manage pressure.</p>
+        <h4>Top 3 Tips for Effective Breathing:</h4>
+        <ol>
+            <li><strong>Rhythm:</strong> Maintain a steady, consistent breathing pattern to calm your nervous system.</li>
+            <li><strong>Smoothness:</strong> Focus on smooth, uninterrupted breaths to promote relaxation and reduce stress.</li>
+            <li><strong>From the Heart:</strong> Imagine breathing through your heart to enhance positive emotions and energy flow.</li>
+        </ol>
+        <p>These techniques help regulate your body's stress response, improve focus, and cultivate a sense of inner calm and balance.</p>
+    </div>
+
+    <div id="heart">❤️</div>
+    
+    <div id="reminder">Breathe from the heart</div>
+
+    <div id="controls">
+        <button id="startPauseButton">Start</button>
+        <button id="resetButton">Reset</button>
+    </div>
+    
+    <div id="stats">
+        <span>Duration: <span id="durationDisplay">5</span>s</span>
+        <span>Cycles: <span id="cycleCount">0</span> / <span id="maxCycles">10</span></span>
+    </div>
+    
+    <div id="inputs">
+        <label for="duration">Duration (s):</label>
+        <input type="number" id="duration" value="5" min="1">
+        <label for="maxCycles">Max Cycles:</label>
+        <input type="number" id="maxCycles" value="10" min="1">
+    </div>
+
+    <script>
+        const heart = document.getElementById('heart');
+        const reminder = document.getElementById('reminder');
+        const startPauseButton = document.getElementById('startPauseButton');
+        const resetButton = document.getElementById('resetButton');
+        const infoButton = document.getElementById('infoButton');
+        const info = document.getElementById('info');
+        const durationInput = document.getElementById('duration');
+        const maxCyclesInput = document.getElementById('maxCycles');
+        const durationDisplay = document.getElementById('durationDisplay');
+        const cycleCountDisplay = document.getElementById('cycleCount');
+        const maxCyclesDisplay = document.getElementById('maxCycles');
+
+        let duration = 5;
+        let maxCycles = 10;
+        let cycleCount = 0;
+        let isRunning = false;
+        let currentPhase = 'inhale';
+        let timeLeft = duration;
+        let scale = 1;
+
+        let timerInterval;
+        let scaleInterval;
+
+        function toggleInfo() {
+            info.style.display = info.style.display === 'none' ? 'block' : 'none';
+            infoButton.textContent = info.style.display === 'none' ? 'Show Tips' : 'Hide Tips';
+        }
+
+        function updateDisplay() {
+            durationDisplay.textContent = duration;
+            cycleCountDisplay.textContent = cycleCount;
+            maxCyclesDisplay.textContent = maxCycles;
+        }
+
+        function toggleStartPause() {
+            isRunning = !isRunning;
+            if (isRunning) {
+                startBreathing();
+                startPauseButton.textContent = 'Pause';
+            } else {
+                pauseBreathing();
+                startPauseButton.textContent = 'Start';
+            }
+        }
+
+        function resetBreathing() {
+            pauseBreathing();
+            cycleCount = 0;
+            currentPhase = 'inhale';
+            timeLeft = duration;
+            scale = 1;
+            heart.style.transform = `scale(${scale})`;
+            reminder.textContent = 'Breathe from the heart';
+            startPauseButton.textContent = 'Start';
+            updateDisplay();
+        }
+
+        function startBreathing() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                if (timeLeft === 0) {
+                    currentPhase = currentPhase === 'inhale' ? 'exhale' : 'inhale';
+                    timeLeft = duration;
+                    if (currentPhase === 'inhale') {
+                        cycleCount++;
+                        if (cycleCount >= maxCycles) {
+                            pauseBreathing();
+                            return;
+                        }
+                    }
+                    reminder.textContent = currentPhase === 'inhale' ? 'Breathe through your heart' : 'Release and feel the rhythm';
+                }
+                updateDisplay();
+            }, 1000);
+
+            scaleInterval = setInterval(() => {
+                const progress = (duration - timeLeft) / duration;
+                if (progress >= 0.2 && progress <= 0.8) {
+                    const normalizedProgress = (progress - 0.2) / 0.6;
+                    scale = currentPhase === 'inhale' 
+                        ? 1 + 0.5 * normalizedProgress 
+                        : 1.5 - 0.5 * normalizedProgress;
+                    heart.style.transform = `scale(${scale})`;
+                }
+            }, 50);
+        }
+
+        function pauseBreathing() {
+            clearInterval(timerInterval);
+            clearInterval(scaleInterval);
+            isRunning = false;
+        }
+
+        infoButton.addEventListener('click', toggleInfo);
+        startPauseButton.addEventListener('click', toggleStartPause);
+        resetButton.addEventListener('click', resetBreathing);
+
+        durationInput.addEventListener('change', () => {
+            duration = parseInt(durationInput.value);
+            timeLeft = duration;
+            updateDisplay();
+        });
+
+        maxCyclesInput.addEventListener('change', () => {
+            maxCycles = parseInt(maxCyclesInput.value);
+            updateDisplay();
+        });
+
+        updateDisplay();
+    </script>
+</body>
+</html>
