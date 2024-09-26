@@ -3,309 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guided Breathing Exercise</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.min.js"></script>
+    <title>Heart-Based Breathing Guide</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: linear-gradient(to right, #BFDBFE, #E9D5FF);
-        }
-        .container {
-            text-align: center;
-            padding: 2rem;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #1F2937;
-            margin-bottom: 1rem;
-        }
-        h2 {
-            color: #374151;
-            margin-bottom: 2rem;
-        }
-        .visualization {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 2rem;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .heart, .circle, .wave, .text {
-            position: absolute;
-            transition: all 0.1s linear;
-        }
-        .circle {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background-color: #3B82F6;
-        }
-        .wave {
-            width: 100%;
-            height: 50%;
-            background-color: #3B82F6;
-            bottom: 0;
-        }
-        .text {
-            font-size: 4rem;
-            font-weight: bold;
-            color: #3B82F6;
-        }
-        .phase {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #374151;
-            margin-top: 1rem;
-        }
-        button {
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-            border: none;
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin: 0 0.5rem;
-        }
-        .start-pause {
-            background-color: #3B82F6;
-            color: white;
-        }
-        .start-pause:hover {
-            background-color: #2563EB;
-        }
-        .reset {
-            background-color: #6B7280;
-            color: white;
-        }
-        .reset:hover {
-            background-color: #4B5563;
-        }
-        .info {
-            margin: 1rem 0;
-            color: #4B5563;
-        }
-        .controls {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 1rem;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #1a202c;
+            color: #f7fafc;
         }
-        .control {
-            margin: 0.5rem 0;
+        h1 {
+            color: #fc8181;
+            font-size: 2rem;
+            margin-bottom: 1rem;
         }
-        label {
-            margin-right: 0.5rem;
+        button {
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.3s;
         }
-        input, select {
-            padding: 0.25rem 0.5rem;
-            border: 1px solid #D1D5DB;
+        button:hover {
+            background-color: #c53030;
+        }
+        #infoButton {
+            background-color: transparent;
+            color: #63b3ed;
+        }
+        #infoButton:hover {
+            color: #4299e1;
+        }
+        #info {
+            display: none;
+            max-width: 28rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: #cbd5e0;
+            margin-bottom: 1rem;
+        }
+        #heart {
+            font-size: 10rem;
+            color: #fc8181;
+            transition: transform 1s ease-in-out;
+        }
+        #reminder {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fc8181;
+            margin: 1rem 0;
+        }
+        #controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        #stats, #inputs {
+            font-size: 0.75rem;
+            color: #a0aec0;
+        }
+        input {
+            width: 3rem;
+            padding: 0.25rem;
             border-radius: 0.25rem;
+            background-color: #2d3748;
+            color: white;
+            border: 1px solid #4a5568;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Guided Breathing Exercise</h1>
-        <h2 id="reminder">Breathe from the heart</h2>
-        <div id="visualization" class="visualization">
-            <div class="heart"></div>
-            <div class="circle"></div>
-            <div class="wave"></div>
-            <div class="text"></div>
-        </div>
-        <div>
-            <button id="startPause" class="start-pause">Start</button>
-            <button id="reset" class="reset">Reset</button>
-        </div>
-        <p id="info" class="info">Duration: 5s | Cycles: 0 / 10</p>
-        <div class="controls">
-            <div class="control">
-                <label for="duration">Duration (seconds):</label>
-                <input id="duration" type="number" value="5" min="1">
-            </div>
-            <div class="control">
-                <label for="maxCycles">Max Cycles:</label>
-                <input id="maxCycles" type="number" value="10" min="1">
-            </div>
-            <div class="control">
-                <label for="visualizationType">Visualization:</label>
-                <select id="visualizationType">
-                    <option value="heart">Heart</option>
-                    <option value="circle">Circle</option>
-                    <option value="wave">Wave</option>
-                    <option value="text">Text</option>
-                </select>
-            </div>
-        </div>
+    <h1>Heart-Based Breathing Guide</h1>
+    
+    <button id="infoButton">Show Tips</button>
+    
+    <div id="info">
+        <p>Your body's stress responses are rooted in ancient survival mechanisms. Understanding that your brain tends to shut down under stress can help you proactively manage pressure.</p>
+        <h4>Top 3 Tips for Effective Breathing:</h4>
+        <ol>
+            <li><strong>Rhythm:</strong> Maintain a steady, consistent breathing pattern to calm your nervous system.</li>
+            <li><strong>Smoothness:</strong> Focus on smooth, uninterrupted breaths to promote relaxation and reduce stress.</li>
+            <li><strong>From the Heart:</strong> Imagine breathing through your heart to enhance positive emotions and energy flow.</li>
+        </ol>
+        <p>These techniques help regulate your body's stress response, improve focus, and cultivate a sense of inner calm and balance.</p>
+    </div>
+
+    <div id="heart">❤️</div>
+    
+    <div id="reminder">Breathe from the heart</div>
+
+    <div id="controls">
+        <button id="startPauseButton">Start</button>
+        <button id="resetButton">Reset</button>
+    </div>
+    
+    <div id="stats">Duration: <span id="durationDisplay">5</span>s | Cycles: <span id="cycleCount">0</span> / <span id="maxCycles">10</span></div>
+    
+    <div id="inputs">
+        <label for="duration">Duration (s):</label>
+        <input type="number" id="duration" value="5" min="1">
+        <label for="maxCycles">Max Cycles:</label>
+        <input type="number" id="maxCycles" value="10" min="1">
     </div>
 
     <script>
+        const heart = document.getElementById('heart');
         const reminder = document.getElementById('reminder');
-        const visualization = document.getElementById('visualization');
-        const startPauseBtn = document.getElementById('startPause');
-        const resetBtn = document.getElementById('reset');
+        const startPauseButton = document.getElementById('startPauseButton');
+        const resetButton = document.getElementById('resetButton');
+        const infoButton = document.getElementById('infoButton');
         const info = document.getElementById('info');
         const durationInput = document.getElementById('duration');
         const maxCyclesInput = document.getElementById('maxCycles');
-        const visualizationTypeSelect = document.getElementById('visualizationType');
+        const durationDisplay = document.getElementById('durationDisplay');
+        const cycleCountDisplay = document.getElementById('cycleCount');
+        const maxCyclesDisplay = document.getElementById('maxCycles');
 
         let duration = 5;
-        let cycleCount = 0;
         let maxCycles = 10;
-        let currentPhase = 0;
+        let cycleCount = 0;
         let isRunning = false;
+        let currentPhase = 'inhale';
         let timeLeft = duration;
         let scale = 1;
+
         let timerInterval;
         let scaleInterval;
 
-        const phases = [
-            { name: 'Inhale', duration: duration },
-            { name: 'Exhale', duration: duration }
-        ];
-
-        function updateVisualization() {
-            const type = visualizationTypeSelect.value;
-            const elements = visualization.children;
-            for (let elem of elements) {
-                elem.style.display = 'none';
-            }
-            switch (type) {
-                case 'heart':
-                    elements[0].style.display = 'block';
-                    lucide.createIcons({
-                        icons: {
-                            heart: elements[0]
-                        },
-                        attrs: {
-                            stroke: '#EF4444',
-                            'stroke-width': 1.5,
-                            width: 200,
-                            height: 200
-                        }
-                    });
-                    break;
-                case 'circle':
-                    elements[1].style.display = 'block';
-                    break;
-                case 'wave':
-                    elements[2].style.display = 'block';
-                    break;
-                case 'text':
-                    elements[3].style.display = 'block';
-                    break;
-            }
+        function toggleInfo() {
+            info.style.display = info.style.display === 'none' ? 'block' : 'none';
+            infoButton.textContent = info.style.display === 'none' ? 'Show Tips' : 'Hide Tips';
         }
 
-        function updateScale() {
-            const type = visualizationTypeSelect.value;
-            const element = visualization.children[['heart', 'circle', 'wave', 'text'].indexOf(type)];
-            switch (type) {
-                case 'heart':
-                case 'circle':
-                case 'text':
-                    element.style.transform = `scale(${scale})`;
-                    break;
-                case 'wave':
-                    element.style.height = `${scale * 50}%`;
-                    break;
-            }
-        }
-
-        function updateInfo() {
-            info.textContent = `Duration: ${duration}s | Cycles: ${cycleCount} / ${maxCycles}`;
+        function updateDisplay() {
+            durationDisplay.textContent = duration;
+            cycleCountDisplay.textContent = cycleCount;
+            maxCyclesDisplay.textContent = maxCycles;
         }
 
         function toggleStartPause() {
             isRunning = !isRunning;
             if (isRunning) {
-                startPauseBtn.textContent = 'Pause';
                 startBreathing();
+                startPauseButton.textContent = 'Pause';
             } else {
-                startPauseBtn.textContent = 'Start';
-                stopBreathing();
+                pauseBreathing();
+                startPauseButton.textContent = 'Start';
             }
         }
 
         function resetBreathing() {
-            stopBreathing();
-            isRunning = false;
-            startPauseBtn.textContent = 'Start';
-            currentPhase = 0;
+            pauseBreathing();
+            cycleCount = 0;
+            currentPhase = 'inhale';
             timeLeft = duration;
             scale = 1;
-            cycleCount = 0;
+            heart.style.transform = `scale(${scale})`;
             reminder.textContent = 'Breathe from the heart';
-            updateScale();
-            updateInfo();
+            startPauseButton.textContent = 'Start';
+            updateDisplay();
         }
 
         function startBreathing() {
             timerInterval = setInterval(() => {
                 timeLeft--;
                 if (timeLeft === 0) {
-                    currentPhase = (currentPhase + 1) % phases.length;
-                    if (currentPhase === 0) {
+                    currentPhase = currentPhase === 'inhale' ? 'exhale' : 'inhale';
+                    timeLeft = duration;
+                    if (currentPhase === 'inhale') {
                         cycleCount++;
                         if (cycleCount >= maxCycles) {
-                            stopBreathing();
-                            resetBreathing();
+                            pauseBreathing();
                             return;
                         }
                     }
-                    reminder.textContent = currentPhase === 0 ? 'Breathe from the heart' : 'Release Smoothness and rhythm';
-                    timeLeft = duration;
+                    reminder.textContent = currentPhase === 'inhale' ? 'Breathe through your heart' : 'Release and feel the rhythm';
                 }
-                updateInfo();
-                const type = visualizationTypeSelect.value;
-                if (type === 'text') {
-                    visualization.querySelector('.text').textContent = timeLeft;
-                    visualization.querySelector('.phase').textContent = phases[currentPhase].name;
-                }
+                updateDisplay();
             }, 1000);
 
             scaleInterval = setInterval(() => {
-                const targetScale = phases[currentPhase].name === 'Inhale' ? 1.5 : 1;
-                const step = (targetScale - scale) / 50;
-                scale += step;
-                updateScale();
-            }, 20);
+                const progress = (duration - timeLeft) / duration;
+                if (progress >= 0.2 && progress <= 0.8) {
+                    const normalizedProgress = (progress - 0.2) / 0.6;
+                    scale = currentPhase === 'inhale' 
+                        ? 1 + 0.5 * normalizedProgress 
+                        : 1.5 - 0.5 * normalizedProgress;
+                    heart.style.transform = `scale(${scale})`;
+                }
+            }, 50);
         }
 
-        function stopBreathing() {
+        function pauseBreathing() {
             clearInterval(timerInterval);
             clearInterval(scaleInterval);
+            isRunning = false;
         }
 
-        startPauseBtn.addEventListener('click', toggleStartPause);
-        resetBtn.addEventListener('click', resetBreathing);
+        infoButton.addEventListener('click', toggleInfo);
+        startPauseButton.addEventListener('click', toggleStartPause);
+        resetButton.addEventListener('click', resetBreathing);
+
         durationInput.addEventListener('change', () => {
-            duration = Math.max(1, parseInt(durationInput.value));
-            phases.forEach(phase => phase.duration = duration);
-            resetBreathing();
-        });
-        maxCyclesInput.addEventListener('change', () => {
-            maxCycles = Math.max(1, parseInt(maxCyclesInput.value));
-            resetBreathing();
-        });
-        visualizationTypeSelect.addEventListener('change', () => {
-            updateVisualization();
-            resetBreathing();
+            duration = parseInt(durationInput.value);
+            timeLeft = duration;
+            updateDisplay();
         });
 
-        updateVisualization();
-        updateScale();
-        updateInfo();
+        maxCyclesInput.addEventListener('change', () => {
+            maxCycles = parseInt(maxCyclesInput.value);
+            updateDisplay();
+        });
+
+        updateDisplay();
     </script>
 </body>
 </html>
